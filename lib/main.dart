@@ -28,7 +28,8 @@ class _HomePageState extends State<HomePage> {
 
   void increase() {
     setState(() {
-      // state를 다시 build 시켜준다.
+      // 상태를 rebuild 시킨다.
+      num++;
     });
   }
 
@@ -40,20 +41,21 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(child: Acomponent()),
+          Expanded(child: Acomponent(num: num)),
           Expanded(
-              child:
-                  Bcomponent()), // 부모를 statful하게 설정 시 자식을 재활용 하고 싶다면 const를 붙힌다.
+              child: Bcomponent(
+                  increase:
+                      increase)), // 부모를 statful하게 설정 시 자식을 재활용 하고 싶다면 const를 붙힌다.
         ],
       ),
     );
   }
 }
 
+//컨슈머(소비자)
 class Acomponent extends StatelessWidget {
-  final int num = 10;
-
-  const Acomponent({Key? key}) : super(key: key);
+  final int num;
+  const Acomponent({Key? key, required this.num}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +67,7 @@ class Acomponent extends StatelessWidget {
           Expanded(
             child: Align(
               child: Text(
-                "1",
+                "${num}",
                 style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
               ),
             ),
@@ -76,8 +78,10 @@ class Acomponent extends StatelessWidget {
   }
 }
 
+//서플라이어 공급자
 class Bcomponent extends StatelessWidget {
-  const Bcomponent({Key? key}) : super(key: key);
+  final Function increase;
+  const Bcomponent({Key? key, required this.increase}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +93,9 @@ class Bcomponent extends StatelessWidget {
           Expanded(
             child: Align(
               child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    increase();
+                  },
                   child: Text(
                     "숫자증가",
                     style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),

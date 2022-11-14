@@ -11,41 +11,74 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       // 공통적인것을 미리 작성한다.
-      home: HomePage(),
+      home: MyHomepage(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class MyHomepage extends StatelessWidget {
+  const MyHomepage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          AbComponent(),
+          HomePage(),
+        ],
+      ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  Widget build(BuildContext context) {
+    double size = MediaQuery.of(context).size.width;
+    double screenSize = size * 0.5;
+    return Container(
+      child: Container(
+        color: Colors.green,
+        width: screenSize,
+      ),
+    );
+  }
 }
 
-class _HomePageState extends State<HomePage> {
+class AbComponent extends StatefulWidget {
+  const AbComponent({Key? key}) : super(key: key);
+
+  @override
+  State<AbComponent> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<AbComponent> {
   int num = 1;
 
-  void increase() {
+  void increase(int n) {
     setState(() {
       // 상태를 rebuild 시킨다.
-      num++;
+      num += n;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     double size = MediaQuery.of(context).size.width;
-    double screenSize = size * 0.8;
-    return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    double screenSize = size * 0.5;
+    return SizedBox(
+      width: screenSize,
+      child: Column(
         children: [
           Expanded(child: Acomponent(num: num)),
           Expanded(
-              child: Bcomponent(
-                  increase:
-                      increase)), // 부모를 statful하게 설정 시 자식을 재활용 하고 싶다면 const를 붙힌다.
+            child: Bcomponent(increase: (n) {
+              increase(n);
+            }),
+          ), // 부모를 statful하게 설정 시 자식을 재활용 하고 싶다면 const를 붙힌다.
         ],
       ),
     );
@@ -94,7 +127,7 @@ class Bcomponent extends StatelessWidget {
             child: Align(
               child: ElevatedButton(
                   onPressed: () {
-                    increase();
+                    increase(1);
                   },
                   child: Text(
                     "숫자증가",
